@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react"
 
 interface IBotao {
-  texto?: string;
+  texto?: any;
   acao?: any;
   w?: string;
   h?: string;
