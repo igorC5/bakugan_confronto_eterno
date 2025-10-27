@@ -69,7 +69,7 @@ function DraggableCard({ id }) {
 }
 
 
-type IMapa = 'NÚCLEO' | 'DESERTO' | 'OCEANO' | 'PLANÍCIE' | 'VULCÃO' | 'CAMPO NEVADO';
+type IMapa = 'NÚCLEO' | 'DESERTO' | 'OCEANO' | 'PLANÍCIE' | 'VULCÃO' | 'CAMPO NEVADO' | '';
 
 interface ICompMapa {
   titulo?: IMapa;
@@ -97,9 +97,9 @@ const CompMapa: React.FC<ICompMapa> = ({titulo, selecionar, selecionado}) => {
 }
 
 type ITelas = 'deck_jogador' | 'deck_oponente' | 'mapa';
-type IAtributo = 'pyrus' | 'subterra' | 'haos' | 'darkus' | 'aquos' | 'ventus' | null;
+export type IAtributo = 'pyrus' | 'subterra' | 'haos' | 'darkus' | 'aquos' | 'ventus' | null;
 
-interface IDeck {
+export interface IDeck {
   slot1: IAtributo;
   slot2: IAtributo;
   slot3: IAtributo;
@@ -109,7 +109,7 @@ export default function Jogador() {
   const navigate = useNavigate();
   const [tela, setTela] = useState<ITelas>('deck_jogador')
   const mapas = ['NÚCLEO', 'DESERTO', 'OCEANO', 'PLANÍCIE', 'VULCÃO', 'CAMPO NEVADO'];
-  const [mapaSelecionado, setMapaSelecionado] = useState('');
+  const [mapaSelecionado, setMapaSelecionado] = useState<IMapa>('');
 
   const atributos: {id: IAtributo}[] = [
     { id: "pyrus" },
@@ -154,7 +154,12 @@ export default function Jogador() {
     }
   }
 
-  const battleData = {
+  interface IBattleData {
+    deckJogador: IDeck;
+    deckOponente: IDeck;
+    mapa: IMapa;
+  };
+  const battleData: IBattleData = {
     deckJogador: deckJogador,
     deckOponente: deckOponente,
     mapa: mapaSelecionado,

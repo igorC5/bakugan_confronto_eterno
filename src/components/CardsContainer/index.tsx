@@ -14,9 +14,6 @@ export default function CardsContainer({children, w, h}: ICardsContainer) {
       bgGradient='to-r'
       gradientFrom='gray.200'
       gradientTo='gray.500'
-      // gradientFrom='rgba(0, 34, 255, 0.2)'
-      // gradientTo='rgba(221, 0, 255, 0.5)'
-      // height='min-content'
       borderRadius={15}
       borderWidth={3}
       borderColor='blue.600'
