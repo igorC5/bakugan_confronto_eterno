@@ -2,12 +2,13 @@ import { useState } from "react";
 import Botao from "@/components/botao/botao";
 import CardsContainer from "@/components/CardsContainer";
 import ReservaContainer from "@/components/ReservaContainer";
-import { Flex, SimpleGrid, Text } from "@chakra-ui/react";
+import { Button, Flex, SimpleGrid, Text } from "@chakra-ui/react";
 import { Dice2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
+import type { IAtributo } from "../Selecoes/Jogador";
 
-const Bakugan = ({ atributo, id, isOverlay, jogador }) => {
+const Bakugan = ({ atributo, id, isOverlay, jogador, arrastavel = true }) => {
   const atributos = {
     pyrus: 'red',
     subterra: 'rgba(88, 28, 0, 1)',
@@ -18,23 +19,26 @@ const Bakugan = ({ atributo, id, isOverlay, jogador }) => {
     null: 'rgba(0,0,0,0)'
   }
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: id || 'bakugan-default',
-    data: { type: 'bakugan', atributo, jogador }
-  });
+  const draggableConfig = arrastavel
+    ? useDraggable({
+        id: id || 'bakugan-default',
+        data: { type: 'bakugan', atributo, jogador }
+      })
+    : { attributes: {}, listeners: {}, setNodeRef: null, transform: null };
+  const { attributes, listeners, setNodeRef, transform } = draggableConfig;
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
   return (
-    <Flex w="100%" justify='center' align="center" ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      <Flex w="70px" h="70px" borderRadius={100} bg={atributos[atributo || 'null']} borderWidth={3} borderColor='blue.700' cursor={isOverlay ? 'grabbing' : 'grab'}/> 
+    <Flex w="100%" justify='center' align="center" ref={setNodeRef} style={style} {...listeners} {...attributes} minH={0}>
+      <Flex w="70px" aspectRatio={1} borderRadius={100} bg={atributos[atributo || 'null']} borderWidth={3} borderColor='blue.700' cursor={!arrastavel ? 'default' : isOverlay ? 'grabbing' : 'grab'}/> 
     </Flex>
   )
 }
 
-const GateCard = ({ jogador, id, isOverlay }) => {
+const GateCard = ({ jogador, id, isOverlay, w }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id || 'gate-default',
     data: { type: 'gate', jogador }
@@ -46,13 +50,44 @@ const GateCard = ({ jogador, id, isOverlay }) => {
 
   return (
     <Flex 
-      w="60px" 
+      w={ w ? w : "60px"} 
       h="100%" 
       bg={jogador === 1 ? 'blue.500' : 'red.500'} 
       borderRadius={8}
       borderWidth={2}
       borderColor='white'
       cursor={isOverlay ? 'grabbing' : 'grab'}
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+    />
+  )
+}
+
+const AbilityCard = ({ jogador, id, isOverlay, w, arrastavel = true }) => {
+  const draggableConfig = arrastavel
+    ? useDraggable({
+        id: id || 'ability-default',
+        data: { type: 'ability', jogador }
+      })
+    : { attributes: {}, listeners: {}, setNodeRef: null, transform: null };
+  
+  const { attributes, listeners, setNodeRef, transform } = draggableConfig;
+
+  const style = transform ? {
+    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+  } : undefined;
+
+  return (
+    <Flex 
+      w={ w ? w : "60px"} 
+      h="100%" 
+      bg={jogador === 1 ? 'cyan.500' : 'orange.500'} 
+      borderRadius={8}
+      borderWidth={2}
+      borderColor='white'
+      cursor={!arrastavel ? 'default' : isOverlay ? 'grabbing' : 'grab'}
       ref={setNodeRef}
       style={style}
       {...listeners}
@@ -86,34 +121,25 @@ const ArenaSlot = ({ num, gateCard, bakugans }) => {
       justifyContent='center' 
       align="center"
       position="relative"
+      minH={0}
+      h="100%"
+      overflow="hidden"
     >
       {!gateCard ? (
         <Text>{num}</Text>
       ) : (
-        <Flex flexDir="column" h="100%" w="100%" justify="space-between" align="center" py={2}>
-          <Flex 
-            ref={setNodeRefTop}
-            w="100%" 
-            h="40%" 
-            justify="center" 
-            align="center"
-            bg={isOverTop ? "rgba(0,0,255,0.2)" : "transparent"}
-            borderRadius={4}
-          >
+        <Flex flexDir="column" w="100%" h="100%" justify="center" align="center" minH={0}>
+
+          <Flex position='absolute' top="2" w="45%">
             {bakugans.player1 && <Bakugan atributo={bakugans.player1.atributo} id={`placed-bakugan-${num}-p1`} jogador={1} />}
           </Flex>
-          <GateCard jogador={gateCard.jogador} id={`placed-gate-${num}`} />
-          <Flex 
-            ref={setNodeRefBottom}
-            w="100%" 
-            h="40%" 
-            justify="center" 
-            align="center"
-            bg={isOverBottom ? "rgba(255,0,0,0.2)" : "transparent"}
-            borderRadius={4}
-          >
+          <Flex h="100%" w="100%" minH={0}>
+            <GateCard w="100%" jogador={gateCard.jogador} id={`placed-gate-${num}`} />
+          </Flex>
+          <Flex position='absolute' bottom="2" w="45%">
             {bakugans.player2 && <Bakugan atributo={bakugans.player2.atributo} id={`placed-bakugan-${num}-p2`} jogador={2} />}
           </Flex>
+
         </Flex>
       )}
     </Flex>
@@ -128,7 +154,7 @@ const BakuganArea = ({ jogador, bakugans }) => {
 
   return (
     <CardsContainer>
-      <SimpleGrid columns={3} w="100%" marginTop={-3} ref={setNodeRef} bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} minH="100px">
+      <SimpleGrid gridGap={1} columns={3} w="100%" ref={setNodeRef} bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8}>
         {
         Object.keys(bakugans).map((chave, idx) => {
           return (
@@ -148,13 +174,71 @@ const GateCardArea = ({ jogador, cards }) => {
   });
 
   return (
-    <CardsContainer>
-      <Flex ref={setNodeRef} w="100%" minH="100px" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={2} gap={2} flexWrap="wrap">
+    <CardsContainer h="35%" p="0px">
+      <Flex ref={setNodeRef} w="100%" h="100%" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={2} gap={2} flexDir="row" justify="space-around">
         {cards.map((card, idx) => (
           <GateCard key={`gate-${jogador}-${idx}`} jogador={jogador} id={`gate-${jogador}-${idx}`} />
         ))}
       </Flex>
     </CardsContainer>
+  )
+}
+
+const AbilityCardArea = ({ jogador, cards }) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `ability-area-${jogador}`,
+    data: { type: 'ability-area', jogador }
+  });
+
+  return (
+    <CardsContainer h="35%">
+      <Flex ref={setNodeRef} w="100%" h="100%" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={2} gap={2} flexDir="row" justify="space-around">
+        {cards.map((card, idx) => (
+          <AbilityCard key={`ability-${jogador}-${idx}`} jogador={jogador} id={`ability-${jogador}-${idx}`} />
+        ))}
+      </Flex>
+    </CardsContainer>
+  )
+}
+
+const AbilityReservaArea = ({ jogador, cards }) => {
+  return (
+    <ReservaContainer>
+      <Flex w="100%" h="100%" p={1} gap={1} flexDir="row" flexWrap="wrap">
+        {cards.map((card, idx) => (
+          <AbilityCard key={`ability-reserva-${jogador}-${idx}`} jogador={jogador} id={`ability-reserva-${jogador}-${idx}`} w="30px" arrastavel={false} />
+        ))}
+      </Flex>
+    </ReservaContainer>
+  )
+}
+
+const AbilityBattleSlot = ({ jogador, abilityCard }) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `ability-battle-slot-${jogador}`,
+    data: { type: 'ability-battle-slot', jogador }
+  });
+
+  return (
+    <Flex
+      ref={setNodeRef}
+      mt="2"
+      bg={isOver ? "rgba(100,100,100,0.8)" : "gray.700"}
+      w="100%"
+      h="80px"
+      rounded="2xl"
+      justify="center"
+      align="center"
+      borderWidth="4px"
+      borderStyle='dashed'
+      borderColor='black'
+    >
+      {abilityCard ? (
+        <AbilityCard jogador={jogador} id={abilityCard} w="60px" />
+      ) : (
+        <Text fontWeight='medium' color='gray.200' textAlign='center'>Use Ability Card aqui</Text>
+      )}
+    </Flex>
   )
 }
 
@@ -164,12 +248,60 @@ export default function VsPlayer() {
 
   const [gateCardsP1, setGateCardsP1] = useState([1, 2, 3]);
   const [gateCardsP2, setGateCardsP2] = useState([1, 2, 3]);
+  const [abilityCardsP1, setAbilityCardsP1] = useState([1, 2, 3]);
+  const [abilityCardsP2, setAbilityCardsP2] = useState([1, 2, 3]);
+  const [abilityReservaP1, setAbilityReservaP1] = useState([]);
+  const [abilityReservaP2, setAbilityReservaP2] = useState([]);
   const [arenaSlots, setArenaSlots] = useState({});
   const [bakugansP1, setBakugansP1] = useState(dadosBatalha.deckJogador);
   const [bakugansP2, setBakugansP2] = useState(dadosBatalha.deckOponente);
   const [activeDrag, setActiveDrag] = useState(null);
 
+  const [batalhaOpen, setBatalhaOpen] = useState(false);
+  const [bakugansBatalha, setBakugansBatalha] = useState<IAtributo[]>([null, null]);
+  const [abilityBatalhaP1, setAbilityBatalhaP1] = useState(null);
+  const [abilityBatalhaP2, setAbilityBatalhaP2] = useState(null);
   const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+
+  const verificarBatalha = (slotNum, slots) => {
+    const slot = slots[slotNum];
+
+    
+    if (!slot || !slot.gateCard) return null;
+    
+    const temBakuganP1 = slot.bakugans?.player1?.atributo;
+    const temBakuganP2 = slot.bakugans?.player2?.atributo;
+    
+    if (temBakuganP1 && temBakuganP2) {
+      const resultado = {
+        slotNum,
+        bakuganP1: slot.bakugans.player1,
+        bakuganP2: slot.bakugans.player2,
+        gateCard: slot.gateCard
+      };
+      
+      setBakugansBatalha([temBakuganP1, temBakuganP2]);
+      setBatalhaOpen(true);
+      return resultado;
+    }
+    
+    return null;
+  }
+
+  const handleDecideVencedor = (vencedor) => {
+    // Mover ability cards para reserva
+    if (abilityBatalhaP1) {
+      setAbilityReservaP1(prev => [...prev, 1]);
+    }
+    if (abilityBatalhaP2) {
+      setAbilityReservaP2(prev => [...prev, 1]);
+    }
+    
+    // Resetar estado da batalha
+    setAbilityBatalhaP1(null);
+    setAbilityBatalhaP2(null);
+    setBatalhaOpen(false);
+  }
 
   const handleRandomJogador = () => {
     const num = Math.random();
@@ -183,9 +315,17 @@ export default function VsPlayer() {
   const handleResetar = () => {
     setGateCardsP1([1, 2, 3]);
     setGateCardsP2([1, 2, 3]);
+    setAbilityCardsP1([1, 2, 3]);
+    setAbilityCardsP2([1, 2, 3]);
+    setAbilityReservaP1([]);
+    setAbilityReservaP2([]);
     setArenaSlots({});
     setBakugansP1(dadosBatalha.deckJogador);
     setBakugansP2(dadosBatalha.deckOponente);
+    setBakugansBatalha([null, null]);
+    setAbilityBatalhaP1(null);
+    setAbilityBatalhaP2(null);
+    setBatalhaOpen(false);
   }
 
   const handleDragStart = (event) => {
@@ -360,16 +500,21 @@ export default function VsPlayer() {
 
       const bakuganId = active.id;
       
-      setArenaSlots(prev => ({
-        ...prev,
+      const novosSlots = {
+        ...arenaSlots,
         [slotNum]: {
-          ...prev[slotNum],
+          ...arenaSlots[slotNum],
           bakugans: {
-            ...prev[slotNum].bakugans,
+            ...arenaSlots[slotNum].bakugans,
             [targetKey]: { atributo: activeData.atributo, originalId: bakuganId }
           }
         }
-      }));
+      };
+
+      setArenaSlots(novosSlots);
+
+      // Verificar batalha após atualizar o estado
+      verificarBatalha(slotNum, novosSlots);
 
       // Remover bakugan da área do jogador (somente se não está vindo de outro slot)
       if (!bakuganId.startsWith('placed-bakugan-')) {
@@ -422,16 +567,21 @@ export default function VsPlayer() {
 
       const bakuganId = active.id;
       
-      setArenaSlots(prev => ({
-        ...prev,
+      const novosSlots = {
+        ...arenaSlots,
         [slotNum]: {
-          ...prev[slotNum],
+          ...arenaSlots[slotNum],
           bakugans: {
-            ...prev[slotNum].bakugans,
+            ...arenaSlots[slotNum].bakugans,
             [targetKey]: { atributo: activeData.atributo, originalId: bakuganId }
           }
         }
-      }));
+      };
+
+      setArenaSlots(novosSlots);
+
+      // Verificar batalha após atualizar o estado
+      verificarBatalha(slotNum, novosSlots);
 
       // Remover bakugan da área do jogador (somente se não está vindo de outro slot)
       if (!bakuganId.startsWith('placed-bakugan-')) {
@@ -469,6 +619,40 @@ export default function VsPlayer() {
         }));
       }
     }
+
+    // Arrastar ability card para slot de batalha
+    if (activeData.type === 'ability' && overData.type === 'ability-battle-slot') {
+      const jogador = activeData.jogador;
+      const slotJogador = overData.jogador;
+      
+      if (jogador !== slotJogador) return;
+
+      const abilityId = active.id;
+      
+      if (jogador === 1) {
+        if (abilityBatalhaP1) return;
+        setAbilityBatalhaP1(abilityId);
+        setAbilityCardsP1(prev => prev.filter((_, idx) => `ability-1-${idx}` !== abilityId));
+      } else {
+        if (abilityBatalhaP2) return;
+        setAbilityBatalhaP2(abilityId);
+        setAbilityCardsP2(prev => prev.filter((_, idx) => `ability-2-${idx}` !== abilityId));
+      }
+    }
+
+    // Remover ability card do slot de batalha
+    if (activeData.type === 'ability' && overData.type === 'ability-area') {
+      const abilityId = active.id;
+      const jogadorDestino = overData.jogador;
+      
+      if (abilityId === abilityBatalhaP1 && jogadorDestino === 1) {
+        setAbilityBatalhaP1(null);
+        setAbilityCardsP1(prev => [...prev, 1]);
+      } else if (abilityId === abilityBatalhaP2 && jogadorDestino === 2) {
+        setAbilityBatalhaP2(null);
+        setAbilityCardsP2(prev => [...prev, 1]);
+      }
+    }
   }
 
   return (
@@ -504,25 +688,25 @@ export default function VsPlayer() {
 
           {/* JOGADOR 1 */}
           <Flex w="23%" flexDir='column' h="90%">
+
+            <Text color='white'>Bakugans</Text>
             <BakuganArea jogador={1} bakugans={bakugansP1} />
+
             <Text color='white'>Gate Cards</Text>
             <GateCardArea jogador={1} cards={gateCardsP1} />
+
             <Text color='white'>Ability Cards</Text>
-            <CardsContainer>
-              {/* aqui vao cartas de habilidade */}
-            </CardsContainer>
+            <AbilityCardArea jogador={1} cards={abilityCardsP1} />
             <Flex flexDir='row' justify='space-between' h="100%">
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Bakugans</Text>
                 <ReservaContainer>
-                  {/* aqui vao bakugans na reserva */}
+                  {/* bakugans na reserva */}
                 </ReservaContainer>
               </Flex>
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Ability Cards</Text>
-                <ReservaContainer>
-                  {/* aqui vao cartas de habilidade na reserva */}
-                </ReservaContainer>
+                <AbilityReservaArea jogador={1} cards={abilityReservaP1} />
               </Flex>
             </Flex>
           </Flex> 
@@ -531,7 +715,7 @@ export default function VsPlayer() {
           <Flex 
             w="54%" 
             flexDir='column' 
-            h="90%" 
+            h="100%" 
           >
             <Flex px="4" mb="4">
 
@@ -573,13 +757,16 @@ export default function VsPlayer() {
 
           {/* JOGADOR 2 */}
           <Flex w="23%" flexDir='column' h="90%">
+
+            <Text color="white">Bakugans</Text>
             <BakuganArea jogador={2} bakugans={bakugansP2} />
+
             <Text color='white'>Gate Cards</Text>
             <GateCardArea jogador={2} cards={gateCardsP2} />
+
             <Text color='white'>Ability Cards</Text>
-            <CardsContainer>
-              {/* cartas de habilidade */}
-            </CardsContainer>
+            <AbilityCardArea jogador={2} cards={abilityCardsP2} />
+
             <Flex flexDir='row' justify='space-between' h="100%">
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Bakugans</Text>
@@ -589,13 +776,84 @@ export default function VsPlayer() {
               </Flex>
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Ability Cards</Text>
-                <ReservaContainer>
-                  {/* cartas de habilidade na reserva */}
-                </ReservaContainer>
+                <AbilityReservaArea jogador={2} cards={abilityReservaP2} />
               </Flex>
             </Flex>
           </Flex>
+          {/* MODAL DE BATALHA */}
+          {batalhaOpen && (
+            <Flex
+              flexDir='column'
+              px="4"
+              py="4"
+              bgGradient='to-r'
+              gradientFrom='gray.200'
+              gradientTo='gray.500'
+              borderRadius={15}
+              borderWidth={3}
+              borderColor='blue.600'
+              align="center"
+              position='absolute'
+              top="15%"
+              left="50%"
+              transform="translateX(-50%)"
+              w="30%"
+            >
+              <Text fontWeight='medium' fontSize='2xl'>Qual o Vencedor?</Text>
+              <Flex flexDir="row" w="100%" justify="space-between">
+                <Flex w="47%" h="100%" align="center" flexDir='column' justify="center">
+                  <Flex w="250px">
+                    <Bakugan atributo={bakugansBatalha[0]} arrastavel={false} />
+                  </Flex>
 
+                  <AbilityBattleSlot jogador={1} abilityCard={abilityBatalhaP1} />
+                  
+                  <Flex mt="20px" />
+                  <Button
+                    w="100%"
+                    h="60px"
+                    padding='10px'
+                    bgGradient="to-b"
+                    gradientFrom="blue.400"
+                    gradientTo="blue.600"
+                    color="gray.900"
+                    textTransform="uppercase"
+                    fontWeight="bold"
+                    clipPath="polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%)"
+                    fontSize="110%"
+                    onClick={() => handleDecideVencedor(1)}
+                  >
+                    JOGADOR 1
+                  </Button>
+                </Flex>
+                <Flex w="47%" justify="center" align="center" flexDir='column'>
+                  <Flex w="250px">
+                    <Bakugan atributo={bakugansBatalha[1]} arrastavel={false} />
+                  </Flex>
+
+                  <AbilityBattleSlot jogador={2} abilityCard={abilityBatalhaP2} />
+                  
+                  <Flex mt="20px" />
+                  <Button
+                    w="100%"
+                    h="60px"
+                    padding='10px'
+                    bgGradient="to-b"
+                    gradientFrom="blue.400"
+                    gradientTo="blue.600"
+                    color="gray.900"
+                    textTransform="uppercase"
+                    fontWeight="bold"
+                    clipPath="polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%)"
+                    fontSize="110%"
+                    onClick={() => handleDecideVencedor(2)}
+                  >
+                    JOGADOR 2
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
+          )}
         </Flex>
         <DragOverlay>
           {activeDrag && activeDrag.data.current.type === 'gate' && (
@@ -604,8 +862,12 @@ export default function VsPlayer() {
           {activeDrag && activeDrag.data.current.type === 'bakugan' && (
             <Bakugan atributo={activeDrag.data.current.atributo} jogador={activeDrag.data.current.jogador} isOverlay />
           )}
+          {activeDrag && activeDrag.data.current.type === 'ability' && (
+            <AbilityCard jogador={activeDrag.data.current.jogador} isOverlay />
+          )}
         </DragOverlay>
       </Flex>
+
     </DndContext>
   )
 }
