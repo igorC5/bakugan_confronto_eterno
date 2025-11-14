@@ -99,7 +99,7 @@ interface ICompMapa {
   selecionado?: boolean;
 }
 
-const CompMapa: React.FC<ICompMapa> = ({ titulo, selecionar, selecionado }) => {
+const CompMapa: React.FC<ICompMapa> = ({ titulo, selecionar, selecionado }: any) => {
   return (
     <Flex
       flexDir="column"
@@ -372,7 +372,7 @@ export default function Jogador() {
                 mt={[6, 10]}
                 justifyItems="center"
               >
-                {mapas.map((mapa) => (
+                {mapas.map((mapa: any) => (
                   <CompMapa
                     key={mapa}
                     titulo={mapa}
