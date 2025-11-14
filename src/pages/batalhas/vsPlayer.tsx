@@ -1,22 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Botao from "@/components/botao/botao";
 import CardsContainer from "@/components/CardsContainer";
 import ReservaContainer from "@/components/ReservaContainer";
-import { Button, Flex, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
 import { Dice2 } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
 import type { IAtributo } from "../Selecoes/Jogador";
 
+const pyrusImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan pyrus.webp'
+const aquosImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan aquos.webp'
+const haosImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan haos.webp'
+const darkusImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan darkus.webp'
+const ventusImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan ventus.webp'
+const subterraImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan subterra.webp'
+
+const gateCardVermelha = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-vermelho.webp'
+const abilityCardVermelha = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card vermalha p2.webp'
+
+const gateCardAzul = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-azul.webp'
+const abilityCardAzul = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card azul p2.webp'
+
+const LifeBar = ({ vidaAtual = 3 }) => {
+  const segmentos = [
+    { from: "red.500", to: "orange.500" },
+    { from: "orange.500", to: "yellow.500" },
+    { from: "yellow.500", to: "green.500" },
+  ];
+
+  return (
+    <Flex bg="gray.800" h="40px" w="80%" borderRadius="md" overflow="hidden">
+      {segmentos.map((seg, index) => (
+        <Flex
+          key={index}
+          borderWidth={2}
+          borderColor="gray.600"
+          w="33%"
+          h="100%"
+          bgGradient={vidaAtual > index ? "to-r" : undefined}
+          gradientFrom={vidaAtual > index ? seg.from : "gray.700"}
+          gradientTo={vidaAtual > index ? seg.to : "gray.700"}
+          transition="all 0.3s ease"
+        />
+      ))}
+    </Flex>
+  );
+};
+
 const Bakugan = ({ atributo, id, isOverlay, jogador, arrastavel = true }) => {
   const atributos = {
-    pyrus: 'red',
-    subterra: 'rgba(88, 28, 0, 1)',
-    haos: 'white',
-    darkus: 'black',
-    aquos: 'blue',
-    ventus: 'limegreen',
-    null: 'rgba(0,0,0,0)'
+    pyrus: { color: 'red', img: pyrusImg },
+    subterra: { color: 'rgba(88, 28, 0, 1)', img: subterraImg },
+    haos: { color: 'white', img: haosImg },
+    darkus: { color: 'black', img: darkusImg },
+    aquos: { color: 'blue', img: aquosImg },
+    ventus: { color: 'limegreen', img: ventusImg },
+    null: { color: 'rgba(0,0,0,0)', img: null }
   }
 
   const draggableConfig = arrastavel
@@ -24,19 +63,54 @@ const Bakugan = ({ atributo, id, isOverlay, jogador, arrastavel = true }) => {
         id: id || 'bakugan-default',
         data: { type: 'bakugan', atributo, jogador }
       })
-    : { attributes: {}, listeners: {}, setNodeRef: null, transform: null };
-  const { attributes, listeners, setNodeRef, transform } = draggableConfig;
+    : { attributes: {}, listeners: {}, setNodeRef: null, transform: null }
 
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
+  const { attributes, listeners, setNodeRef, transform } = draggableConfig
+
+  const style = transform
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
+    : undefined
+
+  const { color, img } = atributos[atributo || 'null']
 
   return (
-    <Flex w="100%" justify='center' align="center" ref={setNodeRef} style={style} {...listeners} {...attributes} minH={0}>
-      <Flex w="70px" aspectRatio={1} borderRadius={100} bg={atributos[atributo || 'null']} borderWidth={3} borderColor='blue.700' cursor={!arrastavel ? 'default' : isOverlay ? 'grabbing' : 'grab'}/> 
+    <Flex
+      w="100%"
+      justify="center"
+      align="center"
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      minH={0}
+      zIndex={2}
+    >
+      <Flex
+        w="70px"
+        aspectRatio={1}
+        borderRadius="full"
+        bg={color}
+        borderWidth={3}
+        borderColor="blue.700"
+        cursor={!arrastavel ? 'default' : isOverlay ? 'grabbing' : 'grab'}
+        overflow="hidden"
+        justify="center"
+        align="center"
+      >
+        {img && (
+          <Image
+            src={img}
+            alt={`Bakugan ${atributo}`}
+            w="100%"
+            h="100%"
+            objectFit="cover"
+          />
+        )}
+      </Flex>
     </Flex>
   )
 }
+
 
 const GateCard = ({ jogador, id, isOverlay, w }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -52,20 +126,36 @@ const GateCard = ({ jogador, id, isOverlay, w }) => {
     <Flex 
       w={ w ? w : "60px"} 
       h="100%" 
-      bg={jogador === 1 ? 'blue.500' : 'red.500'} 
+      bg={jogador === 1 ? 'rgba(37, 99, 235, 0.9)' : 'rgba(220, 38, 38, 0.9)'} 
       borderRadius={8}
       borderWidth={2}
-      borderColor='white'
+      borderColor={jogador === 1 ? 'rgba(37, 99, 235, 0.9)' : 'rgba(220, 38, 38, 0.9)'} 
       cursor={isOverlay ? 'grabbing' : 'grab'}
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
-    />
+      overflow='hidden'
+      position='relative'
+      zIndex={1}
+    >
+      <img
+        src={jogador === 1 ? gateCardVermelha : gateCardAzul}
+        style={{
+        position: 'absolute',
+        backgroundColor: 'blue',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'fill',
+        display: 'block',
+        }}
+      />
+    </Flex>
   )
 }
 
-const AbilityCard = ({ jogador, id, isOverlay, w, arrastavel = true }) => {
+const AbilityCard = ({ jogador, id, isOverlay, w, h, arrastavel = true }) => {
   const draggableConfig = arrastavel
     ? useDraggable({
         id: id || 'ability-default',
@@ -82,7 +172,7 @@ const AbilityCard = ({ jogador, id, isOverlay, w, arrastavel = true }) => {
   return (
     <Flex 
       w={ w ? w : "60px"} 
-      h="100%" 
+      h={h || "100%"} 
       bg={jogador === 1 ? 'cyan.500' : 'orange.500'} 
       borderRadius={8}
       borderWidth={2}
@@ -92,7 +182,22 @@ const AbilityCard = ({ jogador, id, isOverlay, w, arrastavel = true }) => {
       style={style}
       {...listeners}
       {...attributes}
-    />
+      overflow='hidden'
+      position='relative'
+    >
+      <img
+        src={jogador === 1 ? abilityCardVermelha : abilityCardAzul}
+        style={{
+        position: 'absolute',
+        backgroundColor: 'blue',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'fill',
+        display: 'block',
+        }}
+      />
+    </Flex>
   )
 }
 
@@ -174,8 +279,8 @@ const GateCardArea = ({ jogador, cards }) => {
   });
 
   return (
-    <CardsContainer h="35%" p="0px">
-      <Flex ref={setNodeRef} w="100%" h="100%" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={2} gap={2} flexDir="row" justify="space-around">
+    <CardsContainer h="35%" p="6px">
+      <Flex ref={setNodeRef} w="100%" h="100%" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={0} gap={2} flexDir="row" justify="space-around">
         {cards.map((card, idx) => (
           <GateCard key={`gate-${jogador}-${idx}`} jogador={jogador} id={`gate-${jogador}-${idx}`} />
         ))}
@@ -191,8 +296,8 @@ const AbilityCardArea = ({ jogador, cards }) => {
   });
 
   return (
-    <CardsContainer h="35%">
-      <Flex ref={setNodeRef} w="100%" h="100%" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={2} gap={2} flexDir="row" justify="space-around">
+    <CardsContainer h="35%" p="6px">
+      <Flex ref={setNodeRef} w="100%" h="100%" bg={isOver ? "rgba(255,255,255,0.1)" : "transparent"} borderRadius={8} p={0} gap={2} flexDir="row" justify="space-around">
         {cards.map((card, idx) => (
           <AbilityCard key={`ability-${jogador}-${idx}`} jogador={jogador} id={`ability-${jogador}-${idx}`} />
         ))}
@@ -204,9 +309,23 @@ const AbilityCardArea = ({ jogador, cards }) => {
 const AbilityReservaArea = ({ jogador, cards }) => {
   return (
     <ReservaContainer>
-      <Flex w="100%" h="100%" p={1} gap={1} flexDir="row" flexWrap="wrap">
+      <SimpleGrid w="100%" h="100%" p={1} gap={1} flexDir="row">
         {cards.map((card, idx) => (
-          <AbilityCard key={`ability-reserva-${jogador}-${idx}`} jogador={jogador} id={`ability-reserva-${jogador}-${idx}`} w="30px" arrastavel={false} />
+          <AbilityCard key={`ability-reserva-${jogador}-${idx}`} jogador={jogador} id={`ability-reserva-${jogador}-${idx}`} w="33%" arrastavel={false} />
+        ))}
+      </SimpleGrid>
+    </ReservaContainer>
+  )
+}
+
+const BakuganReservaArea = ({ jogador, bakugans }) => {
+  return (
+    <ReservaContainer>
+      <Flex w="100%" h="100%" p={1} gap={1} flexDir="column" flexWrap="wrap" align='center' minH={0}>
+        {bakugans.map((bakugan, idx) => (
+          <Flex key={`bakugan-reserva-${jogador}-${idx}`} w="50%" justify="center" align="center" minH={0}>
+            <Bakugan atributo={bakugan} jogador={jogador} id={`bakugan-reserva-${jogador}-${idx}`} arrastavel={false} />
+          </Flex>
         ))}
       </Flex>
     </ReservaContainer>
@@ -243,6 +362,7 @@ const AbilityBattleSlot = ({ jogador, abilityCard }) => {
 }
 
 export default function VsPlayer() {
+  const navigate = useNavigate();
   const location = useLocation();
   const dadosBatalha = location.state.dados;
 
@@ -252,21 +372,37 @@ export default function VsPlayer() {
   const [abilityCardsP2, setAbilityCardsP2] = useState([1, 2, 3]);
   const [abilityReservaP1, setAbilityReservaP1] = useState([]);
   const [abilityReservaP2, setAbilityReservaP2] = useState([]);
+  const [bakuganReservaP1, setBakuganReservaP1] = useState([]);
+  const [bakuganReservaP2, setBakuganReservaP2] = useState([]);
   const [arenaSlots, setArenaSlots] = useState({});
   const [bakugansP1, setBakugansP1] = useState(dadosBatalha.deckJogador);
   const [bakugansP2, setBakugansP2] = useState(dadosBatalha.deckOponente);
   const [activeDrag, setActiveDrag] = useState(null);
 
   const [batalhaOpen, setBatalhaOpen] = useState(false);
+  const [slotBatalhaAtual, setSlotBatalhaAtual] = useState(null);
   const [bakugansBatalha, setBakugansBatalha] = useState<IAtributo[]>([null, null]);
   const [abilityBatalhaP1, setAbilityBatalhaP1] = useState(null);
   const [abilityBatalhaP2, setAbilityBatalhaP2] = useState(null);
   const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
+  const [vidaP1, setVidaP1] = useState(3);
+  const [vidaP2, setVidaP2] = useState(3);
+
+  useEffect(() => {
+    if (vidaP1 == 0) {
+      alert('O JOGADOR 2 VENCEU!');
+      handleResetar();
+    }
+    if (vidaP2 == 0) {
+      alert('O JOGADOR 1 VENCEU!');
+      handleResetar();
+    }
+  }, [vidaP1, vidaP2]);
+
   const verificarBatalha = (slotNum, slots) => {
     const slot = slots[slotNum];
 
-    
     if (!slot || !slot.gateCard) return null;
     
     const temBakuganP1 = slot.bakugans?.player1?.atributo;
@@ -280,6 +416,7 @@ export default function VsPlayer() {
         gateCard: slot.gateCard
       };
       
+      setSlotBatalhaAtual(slotNum);
       setBakugansBatalha([temBakuganP1, temBakuganP2]);
       setBatalhaOpen(true);
       return resultado;
@@ -297,10 +434,38 @@ export default function VsPlayer() {
       setAbilityReservaP2(prev => [...prev, 1]);
     }
     
+    // Mover bakugans para reserva
+    if (slotBatalhaAtual !== null) {
+      const slot = arenaSlots[slotBatalhaAtual];
+      if (slot) {
+        if (slot.bakugans?.player1?.atributo) {
+          setBakuganReservaP1(prev => [...prev, slot.bakugans.player1.atributo]);
+        }
+        if (slot.bakugans?.player2?.atributo) {
+          setBakuganReservaP2(prev => [...prev, slot.bakugans.player2.atributo]);
+        }
+        
+        // Remover o slot da arena (gate card e bakugans)
+        setArenaSlots(prev => {
+          const newSlots = { ...prev };
+          delete newSlots[slotBatalhaAtual];
+          return newSlots;
+        });
+      }
+    }
+    
     // Resetar estado da batalha
     setAbilityBatalhaP1(null);
     setAbilityBatalhaP2(null);
+    setSlotBatalhaAtual(null);
     setBatalhaOpen(false);
+
+    if (vencedor == 1) {
+      setVidaP2(prev => prev - 1);
+    }
+    if (vencedor == 2) {
+      setVidaP1(prev => prev - 1);
+    }
   }
 
   const handleRandomJogador = () => {
@@ -319,13 +484,18 @@ export default function VsPlayer() {
     setAbilityCardsP2([1, 2, 3]);
     setAbilityReservaP1([]);
     setAbilityReservaP2([]);
+    setBakuganReservaP1([]);
+    setBakuganReservaP2([]);
     setArenaSlots({});
     setBakugansP1(dadosBatalha.deckJogador);
     setBakugansP2(dadosBatalha.deckOponente);
     setBakugansBatalha([null, null]);
     setAbilityBatalhaP1(null);
     setAbilityBatalhaP2(null);
+    setSlotBatalhaAtual(null);
     setBatalhaOpen(false);
+    setVidaP1(3);
+    setVidaP2(3);
   }
 
   const handleDragStart = (event) => {
@@ -596,7 +766,8 @@ export default function VsPlayer() {
           const idx = bakuganId.split('-')[2];
           setBakugansP2(prev => {
             const newBakugans = {...prev};
-            delete newBakugans[Object.keys(prev)[idx]];
+            delete newBakugans
+            [Object.keys(prev)[idx]];
             return newBakugans;
           });
         }
@@ -689,6 +860,34 @@ export default function VsPlayer() {
           {/* JOGADOR 1 */}
           <Flex w="23%" flexDir='column' h="90%">
 
+            <Flex w="100%" align="center">
+              <Flex 
+                w="20%" 
+                justify="center"
+                align='center'
+              >
+                <Flex
+                  bgGradient="to-b"
+                  gradientFrom='blue.400'
+                  gradientTo='blue.700'
+                  w="50px"
+                  aspectRatio={1}
+                  rounded="50px"
+                  justify="center"
+                  align="center"
+                >
+                  <Text
+                    fontWeight='medium'
+                    color='white'
+                    fontSize='2xl'
+                  >
+                    P1
+                  </Text>
+                </Flex>
+              </Flex>
+              <LifeBar vidaAtual={vidaP1} />
+            </Flex>
+
             <Text color='white'>Bakugans</Text>
             <BakuganArea jogador={1} bakugans={bakugansP1} />
 
@@ -700,9 +899,7 @@ export default function VsPlayer() {
             <Flex flexDir='row' justify='space-between' h="100%">
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Bakugans</Text>
-                <ReservaContainer>
-                  {/* bakugans na reserva */}
-                </ReservaContainer>
+                <BakuganReservaArea jogador={1} bakugans={bakuganReservaP1} />
               </Flex>
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Ability Cards</Text>
@@ -720,7 +917,7 @@ export default function VsPlayer() {
             <Flex px="4" mb="4">
 
               <Flex w="33%" justify="center">
-                <Botao texto='pausar' />
+                <Botao texto='sair' acao={() => navigate('/')} />
               </Flex>
 
               <Flex w="33%" justify="center">
@@ -758,6 +955,34 @@ export default function VsPlayer() {
           {/* JOGADOR 2 */}
           <Flex w="23%" flexDir='column' h="90%">
 
+            <Flex w="100%" align="center">
+              <Flex 
+                w="20%" 
+                justify="center"
+                align='center'
+              >
+                <Flex
+                  bgGradient="to-b"
+                  gradientFrom='red.400'
+                  gradientTo='red.700'
+                  w="50px"
+                  aspectRatio={1}
+                  rounded="50px"
+                  justify="center"
+                  align="center"
+                >
+                  <Text
+                    fontWeight='medium'
+                    color='white'
+                    fontSize='2xl'
+                  >
+                    P2
+                  </Text>
+                </Flex>
+              </Flex>
+              <LifeBar vidaAtual={vidaP2} />
+            </Flex>
+
             <Text color="white">Bakugans</Text>
             <BakuganArea jogador={2} bakugans={bakugansP2} />
 
@@ -770,9 +995,7 @@ export default function VsPlayer() {
             <Flex flexDir='row' justify='space-between' h="100%">
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Bakugans</Text>
-                <ReservaContainer>
-                  {/* bakugans na reserva */}
-                </ReservaContainer>
+                <BakuganReservaArea jogador={2} bakugans={bakuganReservaP2} />
               </Flex>
               <Flex flexDir='column' w="49%">
                 <Text color='white'>Ability Cards</Text>
@@ -798,6 +1021,7 @@ export default function VsPlayer() {
               left="50%"
               transform="translateX(-50%)"
               w="30%"
+              zIndex={3}
             >
               <Text fontWeight='medium' fontSize='2xl'>Qual o Vencedor?</Text>
               <Flex flexDir="row" w="100%" justify="space-between">

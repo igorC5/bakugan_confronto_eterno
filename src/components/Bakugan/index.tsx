@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 
-
 export default function Bakugan() {
   return (
     <Flex justifyContent='center' alignItems="center">
