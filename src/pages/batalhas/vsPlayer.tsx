@@ -47,7 +47,7 @@ const LifeBar = ({ vidaAtual = 3 }) => {
   );
 };
 
-const Bakugan = ({ atributo, id, isOverlay, jogador, arrastavel = true }) => {
+const Bakugan = ({ atributo, id, isOverlay, jogador, arrastavel = true }: any) => {
   const atributos = {
     pyrus: { color: 'red', img: pyrusImg },
     subterra: { color: 'rgba(88, 28, 0, 1)', img: subterraImg },
@@ -112,7 +112,7 @@ const Bakugan = ({ atributo, id, isOverlay, jogador, arrastavel = true }) => {
 }
 
 
-const GateCard = ({ jogador, id, isOverlay, w }) => {
+const GateCard = ({ jogador, id, isOverlay, w }: any) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id || 'gate-default',
     data: { type: 'gate', jogador }
@@ -155,7 +155,7 @@ const GateCard = ({ jogador, id, isOverlay, w }) => {
   )
 }
 
-const AbilityCard = ({ jogador, id, isOverlay, w, h, arrastavel = true }) => {
+const AbilityCard = ({ jogador, id, isOverlay, w, h, arrastavel = true }: any) => {
   const draggableConfig = arrastavel
     ? useDraggable({
         id: id || 'ability-default',
@@ -201,13 +201,13 @@ const AbilityCard = ({ jogador, id, isOverlay, w, h, arrastavel = true }) => {
   )
 }
 
-const ArenaSlot = ({ num, gateCard, bakugans }) => {
+const ArenaSlot = ({ num, gateCard, bakugans }: any) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `slot-${num}`,
     data: { type: 'slot', num }
   });
 
-  const { setNodeRef: setNodeRefTop, isOver: isOverTop } = useDroppable({
+  const { setNodeRef: setNodeRefTop, isOver: isOverTop }: any = useDroppable({
     id: `slot-${num}-top`,
     data: { type: 'slot-bakugan', num, jogador: 1 }
   });

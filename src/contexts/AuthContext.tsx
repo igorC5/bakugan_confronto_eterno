@@ -9,7 +9,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children }: any) {
   // user será o nome de usuário ou null
   const [user, setUser] = useState<string | null>(null);
 
@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem("user", dados.user);
       setUser(user);
       return true;
-    } catch (erro) {
+    } catch (erro: any) {
       alert(erro.response.data.erro)
       return false;
     } finally {
