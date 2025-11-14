@@ -267,7 +267,7 @@ export default function Jogador() {
 
                   <SimpleGrid
                     columns={[2, 3]}
-                    spacing={[4, 6]}
+                    gap={[4, 6]}
                     w={["100%", "35%"]}
                     mt={[6, 0]}
                   >
@@ -329,7 +329,7 @@ export default function Jogador() {
 
                   <SimpleGrid
                     columns={[2, 3]}
-                    spacing={[4, 6]}
+                    gap={[4, 6]}
                     w={["100%", "35%"]}
                     mt={[6, 0]}
                   >
@@ -368,7 +368,7 @@ export default function Jogador() {
 
               <SimpleGrid
                 columns={[2, 3, 6]}
-                spacing={[4, 6]}
+                gap={[4, 6]}
                 mt={[6, 10]}
                 justifyItems="center"
               >
