@@ -91,7 +91,7 @@ function Inicio() {
   return (
     <Flex h="100vh">
       <Image
-        src="/public/Componentes Bakugan CE/Tela Inicial/arvore_gif.gif"
+        src="/Componentes_Bakugan_CE/Tela_Inicial/arvore_gif.gif"
         alt="arvore"
         w="100%"
         h="100%"
