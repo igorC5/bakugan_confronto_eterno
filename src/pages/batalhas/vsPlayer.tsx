@@ -868,8 +868,8 @@ export default function VsPlayer() {
               >
                 <Flex
                   bgGradient="to-b"
-                  gradientFrom='red.400'
-                  gradientTo='red.700'
+                  gradientFrom='blue.400'
+                  gradientTo='blue.700'
                   w="50px"
                   aspectRatio={1}
                   rounded="50px"
@@ -963,8 +963,8 @@ export default function VsPlayer() {
               >
                 <Flex
                   bgGradient="to-b"
-                  gradientFrom='blue.400'
-                  gradientTo='blue.700'
+                  gradientFrom='red.400'
+                  gradientTo='red.700'
                   w="50px"
                   aspectRatio={1}
                   rounded="50px"
