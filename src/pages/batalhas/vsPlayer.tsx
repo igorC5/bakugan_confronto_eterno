@@ -8,17 +8,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
 import type { IAtributo } from "../Selecoes/Jogador";
 
-const pyrusImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan pyrus.webp'
-const aquosImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan aquos.webp'
-const haosImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan haos.webp'
-const darkusImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan darkus.webp'
-const ventusImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan ventus.webp'
-const subterraImg = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan subterra.webp'
+const pyrusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan pyrus.webp'
+const aquosImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan aquos.webp'
+const haosImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan haos.webp'
+const darkusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan darkus.webp'
+const ventusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan ventus.webp'
+const subterraImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan subterra.webp'
 
-const gateCardVermelha = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-vermelho.webp'
+const gateCardVermelha = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-vermelho.webp'
 const abilityCardVermelha = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card vermalha p2.webp'
 
-const gateCardAzul = '../../../public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-azul.webp'
+const gateCardAzul = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-azul.webp'
 const abilityCardAzul = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card azul p2.webp'
 
 const LifeBar = ({ vidaAtual = 3 }) => {
