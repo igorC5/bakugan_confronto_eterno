@@ -14,6 +14,7 @@ export default function SelecaoModo() {
         w="100%"
         h="100%"
         position="absolute"
+        objectFit="cover"
         zIndex={1}
       />
       <Flex zIndex={2} flex="1" padding={50}>
