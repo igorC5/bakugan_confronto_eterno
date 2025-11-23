@@ -9,7 +9,7 @@ export default function SelecaoModo() {
   return (
     <Flex h="100vh">
       <Image
-        src="/public/Componentes Bakugan CE/Tela Seleção Batalha/planicie.gif"
+        src="/Componentes Bakugan CE/Tela Seleção Batalha/planicie.gif"
         alt="arvore"
         w="100%"
         h="100%"
