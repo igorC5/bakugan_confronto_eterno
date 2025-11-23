@@ -341,7 +341,12 @@ export default function Jogador() {
               </DndContext>
 
               <Flex justify="flex-end" mt="auto">
-                <Botao texto="escolher campo" p="40px" acao={() => setTela("mapa")} />
+                <Botao 
+                  texto="escolher campo" 
+                  p="40px" 
+                  // acao={() => setTela("mapa")} 
+                  acao={() => handleIrBatalha()}
+                />
               </Flex>
             </Flex>
           )}
