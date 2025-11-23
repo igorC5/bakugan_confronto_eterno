@@ -16,10 +16,10 @@ const ventusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atri
 const subterraImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan subterra.webp'
 
 const gateCardVermelha = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-vermelho.webp'
-const abilityCardVermelha = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card vermalha p2.webp'
+const abilityCardVermelha = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card vermalha p2.webp'
 
 const gateCardAzul = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/gate-card-azul.webp'
-const abilityCardAzul = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card azul p2.webp'
+const abilityCardAzul = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/ability card azul p2.webp'
 
 const LifeBar = ({ vidaAtual = 3 }) => {
   const segmentos = [

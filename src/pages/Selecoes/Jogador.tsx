@@ -8,10 +8,10 @@ import { useNavigate } from "react-router-dom";
 // Caminhos corrigidos (o React acessa a pasta "public" direto da raiz do projeto)
 const pyrusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan pyrus.webp'
 const aquosImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan aquos.webp'
-const haosImg = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan haos.webp'
-const darkusImg = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan darkus.webp'
-const ventusImg = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan ventus.webp'
-const subterraImg = '/public/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan subterra.webp'
+const haosImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan haos.webp'
+const darkusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan darkus.webp'
+const ventusImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan ventus.webp'
+const subterraImg = '/Componentes Bakugan CE/cards, atributos,bakugans/cards, atributos,bakugans/bakugan subterra.webp'
 
 const atributosImgs: Record<string, string> = {
   pyrus: pyrusImg,
